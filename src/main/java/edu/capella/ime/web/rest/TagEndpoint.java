@@ -27,8 +27,8 @@ import com.codahale.metrics.annotation.Timed;
 import edu.capella.ime.assembler.TagAssembler;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.service.TagService;
-import edu.capella.ime.web.rest.resource.ApplicationResource;
 import edu.capella.ime.web.rest.resource.TagResource;
+import edu.capella.ime.web.rest.resource.TagSearchResource;
 
 @RestController
 @RequestMapping("/api/tags")
@@ -54,7 +54,8 @@ public class TagEndpoint {
 		Page<Tag> page = tagService.getTags(pageable);
 		
 		PagedResources<TagResource> pagedResources = pagedAssembler.toResource(page, tagAssembler);
-		pagedResources.add(linkTo(methodOn(this.getClass()).getAllTags()).withRel("all"));		
+		pagedResources.add(linkTo(methodOn(this.getClass()).getAllTags()).withRel("all"));
+		pagedResources.add(linkTo(this.getClass()).slash("search").withRel("search"));			
 		
 		return new ResponseEntity<>(pagedResources, HttpStatus.OK);
 	}
@@ -102,5 +103,16 @@ public class TagEndpoint {
 		Tag tag = tagService.createTag(request);		
 		
 		return new ResponseEntity<>(tagAssembler.toResource(tag), HttpStatus.CREATED);
-	}	
+	}
+	
+	@Timed
+	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PagedResources<TagResource>> search(@RequestBody List<TagSearchResource> request, Pageable pageable, PagedResourcesAssembler<Tag> pagedAssembler) {
+		
+		Page<Tag> page = tagService.searchTags(request, pageable);
+		
+		PagedResources<TagResource> tagResources = pagedAssembler.toResource(page, tagAssembler);
+		
+		return new ResponseEntity<>(tagResources, HttpStatus.OK);
+	}
 }

@@ -3,13 +3,13 @@ package edu.capella.ime.web.rest.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class MediaSearchResource {
+import edu.capella.ime.util.BooleanOperation;
 
-	public enum BooleanOperation {
-		AND, OR, AND_NOT, OR_NOT, NONE
-	}
+public class MediaSearchResource extends ResourceSupport {
 	
 	private List<String> anyOfTags = new ArrayList<>();
 	

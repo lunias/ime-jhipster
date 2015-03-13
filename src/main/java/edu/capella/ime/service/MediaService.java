@@ -1,6 +1,7 @@
 package edu.capella.ime.service;
 
-import static org.springframework.data.jpa.domain.Specifications.*;
+import static org.springframework.data.jpa.domain.Specifications.not;
+import static org.springframework.data.jpa.domain.Specifications.where;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.repository.MediaRepository;
+import edu.capella.ime.util.BooleanOperation;
 import edu.capella.ime.web.rest.resource.MediaResource;
 import edu.capella.ime.web.rest.resource.MediaSearchResource;
-import edu.capella.ime.web.rest.resource.MediaSearchResource.BooleanOperation;
 
 @Service
 @Transactional

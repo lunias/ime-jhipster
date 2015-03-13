@@ -12,6 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -19,6 +23,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.jpa.domain.Specification;
 
 import edu.capella.ime.web.rest.resource.TagResource;
 
@@ -119,5 +124,29 @@ public class Tag extends AbstractAuditingEntity implements Serializable {
 	public String toString() {
 		return "Tag [id=" + id + ", name=" + name + ", description="
 				+ description + "]";
-	}        
+	}
+	
+	public static Specification<Tag> nameLike(final String tagName) {
+		
+		return new Specification<Tag>() {
+
+			@Override
+			public Predicate toPredicate(Root<Tag> root, CriteriaQuery<?> query, CriteriaBuilder cb) {												
+				
+				return cb.like(root.<String> get("name"), '%' + tagName + '%');
+			}
+		};
+	}
+	
+	public static Specification<Tag> descriptionLike(final String description) {
+	
+		return new Specification<Tag>() {
+
+			@Override
+			public Predicate toPredicate(Root<Tag> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+				return cb.like(root.<String> get("description"), '%' + description + '%');
+			}
+		};
+	}
 }
