@@ -1,0 +1,4 @@
+id;name;description;status;created_by
+1;Readiness Center;The readiness center application;UP;system
+2;Campus;;DOWN;system
+3;Test Application;A test application;UP;system

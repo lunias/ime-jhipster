@@ -1,0 +1,18 @@
+{
+  "generator-jhipster": {
+    "baseName": "ime",
+    "packageName": "edu.capella.ime",
+    "packageFolder": "edu/capella/ime",
+    "authenticationType": "token",
+    "hibernateCache": "ehcache",
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Memory",
+    "prodDatabaseType": "postgresql",
+    "useCompass": true,
+    "buildTool": "gradle",
+    "frontendBuilder": "grunt",
+    "javaVersion": "7"
+  }
+}

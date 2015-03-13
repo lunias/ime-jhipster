@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+    <changeSet id="3" author="ime">
+    
+    	<!-- APPLICATION -->
+    	
+        <createTable tableName="T_APPLICATION">
+        
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            
+            <column name="name" type="varchar(256)">
+            	<constraints unique="true" nullable="false"/>
+            </column>
+            
+            <column name="description" type="varchar(256)"/>
+            
+            <column name="status" type="varchar(256)">
+            	<constraints nullable="false"/>
+            </column>
+                        
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp"/>
+            
+        </createTable>
+
+        <createIndex indexName="idx_application_name"
+            tableName="T_APPLICATION">
+            <column name="name" type="varchar(256)"/>
+        </createIndex>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/applications.csv"
+                  separator=";"
+                  tableName="T_APPLICATION">
+        </loadData>
+        
+        <dropDefaultValue tableName="T_APPLICATION" columnName="created_date" columnDataType="datetime"/>
+        
+        <!-- MEDIA -->
+        
+        <createTable tableName="T_MEDIA">
+        
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            
+            <column name="media_value" type="clob"/>            
+                        
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp"/>
+            
+        </createTable>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/media.csv"
+                  separator=";"
+                  tableName="T_MEDIA">
+        </loadData>
+        
+        <dropDefaultValue tableName="T_MEDIA" columnName="created_date" columnDataType="datetime"/>
+        
+        <!-- TAG -->
+        
+        <createTable tableName="T_TAG">
+        
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            
+            <column name="name" type="varchar(256)">
+            	<constraints unique="true" nullable="false"/>
+            </column>
+            
+            <column name="description" type="varchar(256)"/>
+                        
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>            
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp"/>
+            
+        </createTable>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/tags.csv"
+                  separator=";"
+                  tableName="T_TAG">
+        </loadData>
+        
+        <dropDefaultValue tableName="T_TAG" columnName="created_date" columnDataType="datetime"/>
+        
+        <!-- APPLICATION_MEDIA -->
+        
+        <createTable tableName="APPLICATION_MEDIA">
+            <column name="application_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="media_id" type="bigint">
+                <constraints nullable="false"/>            
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="application_id, media_id" tableName="APPLICATION_MEDIA"/>        
+                                 
+        <addForeignKeyConstraint baseColumnNames="application_id"
+                                 baseTableName="APPLICATION_MEDIA"
+                                 constraintName="fk_application_media_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_APPLICATION" />                                         
+        
+        <addForeignKeyConstraint baseColumnNames="media_id" 
+        						 baseTableName="APPLICATION_MEDIA"
+								 constraintName="fk_media_application_id" 
+								 referencedColumnNames="id"
+								 referencedTableName="T_MEDIA" />
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/application_media.csv"
+                  separator=";"
+                  tableName="APPLICATION_MEDIA">
+        </loadData>
+        
+        <!-- MEDIA_TAG -->
+        
+        <createTable tableName="MEDIA_TAG">
+            <column name="media_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="bigint">
+                <constraints nullable="false"/>            
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="media_id, tag_id" tableName="MEDIA_TAG"/>        
+                                 
+        <addForeignKeyConstraint baseColumnNames="media_id"
+                                 baseTableName="MEDIA_TAG"
+                                 constraintName="fk_media_tag_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="T_MEDIA" />                                         
+        
+        <addForeignKeyConstraint baseColumnNames="tag_id" 
+        						 baseTableName="MEDIA_TAG"
+								 constraintName="fk_tag_media_id" 
+								 referencedColumnNames="id"
+								 referencedTableName="T_TAG" />
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/media_tag.csv"
+                  separator=";"
+                  tableName="MEDIA_TAG">
+        </loadData>        
+        
+    </changeSet>    
+</databaseChangeLog>

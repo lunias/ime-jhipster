@@ -1,0 +1,4 @@
+id;name;description;created_by
+1;UOS;UOS related media;system
+2;FLEXPATH;Flexpath related media;system
+3;INTERNAL_USE;Media for internal use only;system
