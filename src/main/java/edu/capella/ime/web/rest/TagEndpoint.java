@@ -28,7 +28,7 @@ import edu.capella.ime.assembler.TagAssembler;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.service.TagService;
 import edu.capella.ime.web.rest.resource.TagResource;
-import edu.capella.ime.web.rest.resource.TagSearchResource;
+import edu.capella.ime.web.rest.resource.search.TagSearchResource;
 
 @RestController
 @RequestMapping("/api/tags")
@@ -89,7 +89,7 @@ public class TagEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> updateTag(@PathVariable Long id) {
+	public ResponseEntity<?> deleteTag(@PathVariable Long id) {
 		
 		tagService.deleteTag(id);		
 		

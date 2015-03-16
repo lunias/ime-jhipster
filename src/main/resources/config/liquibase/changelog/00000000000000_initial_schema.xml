@@ -62,7 +62,7 @@
             </column>
         </createTable>
 
-        <createTable tableName="T_USER_AUTHORITY">
+        <createTable tableName="USER_AUTHORITY">
             <column name="user_id" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -71,16 +71,16 @@
             </column>
         </createTable>
 
-        <addPrimaryKey columnNames="user_id, authority_name" tableName="T_USER_AUTHORITY"/>
+        <addPrimaryKey columnNames="user_id, authority_name" tableName="USER_AUTHORITY"/>
 
         <addForeignKeyConstraint baseColumnNames="authority_name"
-                                 baseTableName="T_USER_AUTHORITY"
+                                 baseTableName="USER_AUTHORITY"
                                  constraintName="fk_authority_name"
                                  referencedColumnNames="name"
                                  referencedTableName="T_AUTHORITY"/>
 
         <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="T_USER_AUTHORITY"
+                                 baseTableName="USER_AUTHORITY"
                                  constraintName="fk_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="T_USER"/>
@@ -102,7 +102,7 @@
         <loadData encoding="UTF-8"
                   file="config/liquibase/users_authorities.csv"
                   separator=";"
-                  tableName="T_USER_AUTHORITY"/>
+                  tableName="USER_AUTHORITY"/>
 
         <createTable tableName="T_PERSISTENT_AUDIT_EVENT">
             <column name="event_id" type="bigint" autoIncrement="true">

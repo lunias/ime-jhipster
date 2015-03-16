@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,7 +48,7 @@ public class Media extends AbstractAuditingEntity implements Serializable {
 	@Column(name = "media_value")
 	private String mediaValue;
 	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy="mediaItems")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy="mediaItems", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Set<Application> applications = new HashSet<>();
 	
     @Fetch(FetchMode.SUBSELECT)
@@ -55,7 +56,8 @@ public class Media extends AbstractAuditingEntity implements Serializable {
     @JoinTable(
             name = "MEDIA_TAG",
             joinColumns = {@JoinColumn(name = "media_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})	
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)    
 	Set<Tag> tags = new HashSet<>();	
     
 	public Media(String mediaValue) {

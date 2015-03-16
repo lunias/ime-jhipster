@@ -1,4 +1,4 @@
-package edu.capella.ime.web.rest.resource;
+package edu.capella.ime.web.rest.resource.search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import edu.capella.ime.util.BooleanOperation;
 
-public class MediaSearchResource extends ResourceSupport {
+public class MediaSearchResource extends ResourceSupport implements SearchResource {
 	
 	private List<String> anyOfTags = new ArrayList<>();
 	

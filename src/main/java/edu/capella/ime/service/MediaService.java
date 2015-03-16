@@ -1,11 +1,7 @@
 package edu.capella.ime.service;
 
-import static org.springframework.data.jpa.domain.Specifications.not;
-import static org.springframework.data.jpa.domain.Specifications.where;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,20 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.repository.MediaRepository;
-import edu.capella.ime.util.BooleanOperation;
+import edu.capella.ime.service.search.SearchEnabledService;
 import edu.capella.ime.web.rest.resource.MediaResource;
-import edu.capella.ime.web.rest.resource.MediaSearchResource;
+import edu.capella.ime.web.rest.resource.search.MediaSearchResource;
 
 @Service
 @Transactional
-public class MediaService {
+public class MediaService extends SearchEnabledService<Media, MediaSearchResource> {
 
     private final Logger log = LoggerFactory.getLogger(MediaService.class);
 	
@@ -150,72 +145,30 @@ public class MediaService {
     	media.getTags().removeAll(tags);
     }
     
+    @Transactional(readOnly = true)    
     public Page<Media> searchMedia(List<MediaSearchResource> searchResources, Pageable pageable) {    	
     	
-    	List<Specification<Media>> specs = new ArrayList<>();
-    	LinkedList<BooleanOperation> joiningOperations = new LinkedList<>();    	
-    	
-    	for (MediaSearchResource searchResource : searchResources) {
-    		
-    		if (!searchResource.getAnyOfTags().isEmpty()) {
-    			
-    			specs.add(Media.hasAnyOfTags(searchResource.getAnyOfTagsArray()));
-    			
-    		} else if (!searchResource.getNoneOfTags().isEmpty()) {
-    			
-    			specs.add(Media.hasNoneOfTags(searchResource.getNoneOfTagsArray()));
-    			
-    		} else if (!searchResource.getAllOfTags().isEmpty()) {
-    			
-    			specs.add(Media.hasAllOfTags(searchResource.getAllOfTagsArray()));
-    		}
-    		
-    		if (searchResource.getBooleanOperation() != BooleanOperation.NONE) {
-    			joiningOperations.add(searchResource.getBooleanOperation());
-    		}
-    	}
-    	
-    	if (specs.isEmpty()) {
-    		// TODO throw exception
-    		log.warn("searchMedia: no valid specifications supplied");
-    	}
-    	
-    	int specIndex = 0;
-    	Specifications<Media> searchSpecs = where(specs.get(specIndex));
-    	loop: for (BooleanOperation joinOperation : joiningOperations) {
-    		
-    		if (++specIndex > specs.size() - 1) {
-    			break;
-    		}
-    		
-    		switch (joinOperation) {
-			case AND:
-				searchSpecs = searchSpecs.and(specs.get(specIndex));
-				break;
-				
-			case AND_NOT:
-				searchSpecs = searchSpecs.and(not(specs.get(specIndex)));
-				break;
-				
-			case OR:
-				searchSpecs = searchSpecs.or(specs.get(specIndex));
-				break;
-				
-			case OR_NOT:
-				searchSpecs = searchSpecs.or(not(specs.get(specIndex)));
-				break;
-				
-			case NONE:
-				break loop;
-				
-			default:
-				log.warn("searchMedia: unkown boolean operation encountered");
-				break loop;
-    		}
-    	}
-    	
-    	Page<Media> page = mediaRepository.findAll(searchSpecs, pageable);
+    	Page<Media> page = mediaRepository.findAll(buildSearchSpecifications(searchResources), pageable);
     	
     	return page;
     }
+
+	@Override
+	public Specification<Media> processSearchResource(MediaSearchResource searchResource) {
+
+		if (!searchResource.getAnyOfTags().isEmpty()) {
+			
+			return Media.hasAnyOfTags(searchResource.getAnyOfTagsArray());
+			
+		} else if (!searchResource.getNoneOfTags().isEmpty()) {
+			
+			return Media.hasNoneOfTags(searchResource.getNoneOfTagsArray());
+			
+		} else if (!searchResource.getAllOfTags().isEmpty()) {
+			
+			return Media.hasAllOfTags(searchResource.getAllOfTagsArray());
+		}		
+		
+		return null;
+	}
 }

@@ -31,8 +31,8 @@ import edu.capella.ime.domain.Tag;
 import edu.capella.ime.service.MediaService;
 import edu.capella.ime.service.TagService;
 import edu.capella.ime.web.rest.resource.MediaResource;
-import edu.capella.ime.web.rest.resource.MediaSearchResource;
 import edu.capella.ime.web.rest.resource.TagResource;
+import edu.capella.ime.web.rest.resource.search.MediaSearchResource;
 
 @RestController
 @RequestMapping("/api/media")
@@ -115,12 +115,12 @@ public class MediaEndpoint {
 	}	
 	
 	@Timed
-	@RequestMapping(method = RequestMethod.POST, value = "/{id}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addMediaTags(@PathVariable Long id, @RequestBody List<Long> tagIds) {
 						
 		mediaService.addTagsToMedia(id, tagIds);
 		
-		return new ResponseEntity<>(HttpStatus.CREATED);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}	
 	
 	@Timed

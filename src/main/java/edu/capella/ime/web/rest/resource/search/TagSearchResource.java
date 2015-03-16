@@ -1,10 +1,10 @@
-package edu.capella.ime.web.rest.resource;
+package edu.capella.ime.web.rest.resource.search;
 
 import org.springframework.hateoas.ResourceSupport;
 
 import edu.capella.ime.util.BooleanOperation;
 
-public class TagSearchResource extends ResourceSupport {
+public class TagSearchResource extends ResourceSupport implements SearchResource {
 
 	private String nameLike = "";
 	
@@ -28,6 +28,7 @@ public class TagSearchResource extends ResourceSupport {
 		this.descriptionLike = descriptionLike;
 	}
 
+	@Override
 	public BooleanOperation getBooleanOperation() {
 		return booleanOperation;
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +49,7 @@ public class Tag extends AbstractAuditingEntity implements Serializable {
     @Column(length = 256)	
 	private String description = "";
     
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy="tags")
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy="tags", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	private Set<Media> taggedMedia = new HashSet<>();    
 
     public Tag(String name, String description) {

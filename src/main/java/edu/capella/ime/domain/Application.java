@@ -16,6 +16,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -25,6 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.jpa.domain.Specification;
 
 import edu.capella.ime.web.rest.resource.ApplicationResource;
 
@@ -59,6 +64,7 @@ public class Application extends AbstractAuditingEntity implements Serializable 
             name = "APPLICATION_MEDIA",
             joinColumns = {@JoinColumn(name = "application_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "media_id", referencedColumnName = "id")})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Media> mediaItems = new HashSet<>();
 
     public Application(String name, String description) {
@@ -141,5 +147,29 @@ public class Application extends AbstractAuditingEntity implements Serializable 
 	public String toString() {
 		return "Application [id=" + id + ", name=" + name + ", description="
 				+ description + ", status=" + status + "]";
-	}        
+	}
+	
+	public static Specification<Application> nameLike(final String applicationName) {
+		
+		return new Specification<Application>() {
+
+			@Override
+			public Predicate toPredicate(Root<Application> root, CriteriaQuery<?> query, CriteriaBuilder cb) {												
+				
+				return cb.like(root.<String> get("name"), '%' + applicationName + '%');
+			}
+		};
+	}
+	
+	public static Specification<Application> descriptionLike(final String description) {
+	
+		return new Specification<Application>() {
+
+			@Override
+			public Predicate toPredicate(Root<Application> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+
+				return cb.like(root.<String> get("description"), '%' + description + '%');
+			}
+		};
+	}	
 }

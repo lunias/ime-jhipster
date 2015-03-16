@@ -9,17 +9,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.capella.ime.domain.Application;
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.repository.ApplicationRepository;
+import edu.capella.ime.service.search.SearchEnabledService;
 import edu.capella.ime.web.rest.resource.ApplicationResource;
+import edu.capella.ime.web.rest.resource.search.ApplicationSearchResource;
 
 @Service
 @Transactional
-public class ApplicationService {
+public class ApplicationService extends SearchEnabledService<Application, ApplicationSearchResource> {
 
     private final Logger log = LoggerFactory.getLogger(ApplicationService.class);
     
@@ -109,5 +112,28 @@ public class ApplicationService {
     	List<Media> media = mediaService.getMedia(mediaIds);
     	
     	application.getMedia().removeAll(media);
-    }    
+    }
+    
+    @Transactional(readOnly = true)    
+    public Page<Application> searchApplications(List<ApplicationSearchResource> searchResources, Pageable pageable) {
+    	
+    	Page<Application> page = applicationRepository.findAll(buildSearchSpecifications(searchResources), pageable);
+    	
+    	return page;
+    }
+
+	@Override
+	public Specification<Application> processSearchResource(ApplicationSearchResource searchResource) {
+
+		if (!searchResource.getNameLike().isEmpty()) {
+			
+			return Application.nameLike(searchResource.getNameLike());
+			
+		} else if (!searchResource.getDescriptionLike().isEmpty()) {
+			
+			return Application.descriptionLike(searchResource.getDescriptionLike());			
+		}
+		
+		return null;
+	}    
 }

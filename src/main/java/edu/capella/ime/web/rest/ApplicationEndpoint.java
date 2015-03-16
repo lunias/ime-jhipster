@@ -32,6 +32,7 @@ import edu.capella.ime.service.ApplicationService;
 import edu.capella.ime.service.MediaService;
 import edu.capella.ime.web.rest.resource.ApplicationResource;
 import edu.capella.ime.web.rest.resource.MediaResource;
+import edu.capella.ime.web.rest.resource.search.ApplicationSearchResource;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -65,6 +66,7 @@ public class ApplicationEndpoint {
 		
 		PagedResources<ApplicationResource> pagedResources = pagedAssembler.toResource(page, applicationAssembler);
 		pagedResources.add(linkTo(methodOn(this.getClass()).getAllApplications()).withRel("all"));
+		pagedResources.add(linkTo(this.getClass()).slash("search").withRel("search"));	
 		
 		return new ResponseEntity<>(pagedResources, HttpStatus.OK);
 	}	
@@ -118,12 +120,12 @@ public class ApplicationEndpoint {
 	}
 	
 	@Timed
-	@RequestMapping(method = RequestMethod.POST, value = "/{id}/media", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}/media", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addApplicationMedia(@PathVariable Long id, @RequestBody List<Long> mediaIds) {
 						
 		applicationService.addMediaToApplication(id, mediaIds);
 		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}	
 	
 	@Timed
@@ -151,5 +153,16 @@ public class ApplicationEndpoint {
 		Application application = applicationService.createApplication(request);
 		
 		return new ResponseEntity<>(applicationAssembler.toResource(application), HttpStatus.CREATED);
-	}	
+	}
+	
+	@Timed
+	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)	
+	public ResponseEntity<PagedResources<ApplicationResource>> search(@RequestBody List<ApplicationSearchResource> request, Pageable pageable, PagedResourcesAssembler<Application> pagedAssembler) {
+		
+		Page<Application> page = applicationService.searchApplications(request, pageable);
+		
+		PagedResources<ApplicationResource> pagedResources = pagedAssembler.toResource(page, applicationAssembler);
+		
+		return new ResponseEntity<>(pagedResources, HttpStatus.OK);
+	}
 }
