@@ -5,6 +5,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,7 @@ import com.codahale.metrics.annotation.Timed;
 import edu.capella.ime.assembler.TagAssembler;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.service.TagService;
+import edu.capella.ime.service.exception.InvalidResourceException;
 import edu.capella.ime.web.rest.resource.TagResource;
 import edu.capella.ime.web.rest.resource.search.TagSearchResource;
 
@@ -39,6 +43,9 @@ public class TagEndpoint {
 	
 	private TagService tagService;
 	private TagAssembler tagAssembler;
+	
+	private static final String INVALID_TAG = "Invalid tag resource";
+	private static final String INVALID_TAG_SEARCH = "Invalid tag search resource";		
 	
 	@Autowired
 	public TagEndpoint(TagService tagService, TagAssembler tagAssembler) {
@@ -80,7 +87,11 @@ public class TagEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TagResource> updateTag(@PathVariable Long id, @RequestBody TagResource request) {
+	public ResponseEntity<TagResource> updateTag(@PathVariable Long id, @Valid @RequestBody TagResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_TAG, br);
+		}		
 		
 		Tag tag = tagService.updateTag(id, request);		
 		
@@ -98,7 +109,11 @@ public class TagEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TagResource> createTag(@RequestBody TagResource request) {
+	public ResponseEntity<TagResource> createTag(@Valid @RequestBody TagResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_TAG, br);
+		}		
 		
 		Tag tag = tagService.createTag(request);		
 		
@@ -107,7 +122,12 @@ public class TagEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResources<TagResource>> search(@RequestBody List<TagSearchResource> request, Pageable pageable, PagedResourcesAssembler<Tag> pagedAssembler) {
+	public ResponseEntity<PagedResources<TagResource>> search(@Valid @RequestBody List<TagSearchResource> request, Pageable pageable, 
+			PagedResourcesAssembler<Tag> pagedAssembler, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_TAG_SEARCH, br);			
+		}		
 		
 		Page<Tag> page = tagService.searchTags(request, pageable);
 		

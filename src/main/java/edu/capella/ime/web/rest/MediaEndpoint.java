@@ -5,6 +5,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +32,7 @@ import edu.capella.ime.assembler.TagAssembler;
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.domain.Tag;
 import edu.capella.ime.service.MediaService;
-import edu.capella.ime.service.TagService;
+import edu.capella.ime.service.exception.InvalidResourceException;
 import edu.capella.ime.web.rest.resource.MediaResource;
 import edu.capella.ime.web.rest.resource.TagResource;
 import edu.capella.ime.web.rest.resource.search.MediaSearchResource;
@@ -45,6 +48,9 @@ public class MediaEndpoint {
 	private MediaAssembler mediaAssembler;
 	
 	private TagAssembler tagAssembler;
+	
+	private static final String INVALID_MEDIA = "Invalid media resource";
+	private static final String INVALID_MEDIA_SEARCH = "Invalid media search resource";	
 	
 	@Autowired
 	public MediaEndpoint(MediaService mediaService, MediaAssembler mediaAssembler, 
@@ -125,7 +131,11 @@ public class MediaEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MediaResource> updateMedia(@PathVariable Long id, @RequestBody MediaResource request) {
+	public ResponseEntity<MediaResource> updateMedia(@PathVariable Long id, @Valid @RequestBody MediaResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_MEDIA, br);
+		}		
 		
 		Media media = mediaService.updateMedia(id, request);
 		
@@ -143,7 +153,11 @@ public class MediaEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MediaResource> createMedia(@RequestBody MediaResource request) {
+	public ResponseEntity<MediaResource> createMedia(@Valid @RequestBody MediaResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_MEDIA, br);
+		}		
 		
 		Media media = mediaService.createMedia(request);
 		
@@ -152,7 +166,11 @@ public class MediaEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResources<MediaResource>> search(@RequestBody List<MediaSearchResource> request, Pageable pageable, PagedResourcesAssembler<Media> pagedAssembler) {
+	public ResponseEntity<PagedResources<MediaResource>> search(@Valid @RequestBody List<MediaSearchResource> request, Pageable pageable, PagedResourcesAssembler<Media> pagedAssembler, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_MEDIA_SEARCH, br);			
+		}
 		
 		Page<Media> page = mediaService.searchMedia(request, pageable);
 		

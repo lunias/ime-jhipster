@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import edu.capella.ime.domain.Application;
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.repository.ApplicationRepository;
+import edu.capella.ime.service.exception.ApplicationNotFoundException;
 import edu.capella.ime.service.search.SearchEnabledService;
 import edu.capella.ime.web.rest.resource.ApplicationResource;
 import edu.capella.ime.web.rest.resource.search.ApplicationSearchResource;
@@ -53,17 +54,22 @@ public class ApplicationService extends SearchEnabledService<Application, Applic
     }
     
     @Transactional(readOnly = true)
-    public Application getApplication(Long applicationId) {
+    public Application getApplication(Long applicationId) 
+    		throws ApplicationNotFoundException {
     	
     	Application application = applicationRepository.findOne(applicationId);
+    	
+    	if (application == null) throw new ApplicationNotFoundException(applicationId);
     	
     	return application;
     }  
     
     @Transactional(readOnly = true)    
-    public List<Media> getApplicationMedia(Long applicationId) {
+    public List<Media> getApplicationMedia(Long applicationId) 
+    		throws ApplicationNotFoundException {
     	
-    	Application application = getApplication(applicationId);
+    	Application application = getApplication(applicationId);    	
+    	
     	application.getMedia().size();
     	
     	List<Media> media = new ArrayList<>(application.getMedia());
@@ -71,9 +77,10 @@ public class ApplicationService extends SearchEnabledService<Application, Applic
     	return media;
     }
     
-    public Application updateApplication(Long applicationId, ApplicationResource applicationResource) {
+    public Application updateApplication(Long applicationId, ApplicationResource applicationResource) 
+    		throws ApplicationNotFoundException {
     	
-    	Application application = getApplication(applicationId);
+    	Application application = getApplication(applicationId);    	
     	
     	BeanUtils.copyProperties(applicationResource, application);
     	
@@ -96,7 +103,8 @@ public class ApplicationService extends SearchEnabledService<Application, Applic
     	applicationRepository.delete(applicationId);
     }
     
-    public void addMediaToApplication(Long applicationId, List<Long> mediaIds) {
+    public void addMediaToApplication(Long applicationId, List<Long> mediaIds) 
+    		throws ApplicationNotFoundException {
     	
     	Application application = getApplication(applicationId);
     	
@@ -105,7 +113,8 @@ public class ApplicationService extends SearchEnabledService<Application, Applic
     	application.getMedia().addAll(media);
     }
     
-    public void removeMediaFromApplication(Long applicationId, List<Long> mediaIds) {
+    public void removeMediaFromApplication(Long applicationId, List<Long> mediaIds) 
+    		throws ApplicationNotFoundException {
     	
     	Application application = getApplication(applicationId);
     	

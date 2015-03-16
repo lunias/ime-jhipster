@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.capella.ime.domain.Tag;
+import edu.capella.ime.repository.MediaRepository;
 import edu.capella.ime.repository.TagRepository;
+import edu.capella.ime.service.exception.MediaNotFoundException;
+import edu.capella.ime.service.exception.TagNotFoundException;
 import edu.capella.ime.service.search.SearchEnabledService;
 import edu.capella.ime.web.rest.resource.TagResource;
 import edu.capella.ime.web.rest.resource.search.TagSearchResource;
@@ -25,12 +28,14 @@ public class TagService extends SearchEnabledService<Tag, TagSearchResource> {
 	
     private final Logger log = LoggerFactory.getLogger(TagService.class);
     
-    private TagRepository tagRepository;
+    private TagRepository tagRepository;    
+    private MediaRepository mediaRepository;
     
     @Autowired
-    public TagService(TagRepository tagRepository) {
+    public TagService(TagRepository tagRepository, MediaRepository mediaRepository) {
     	
     	this.tagRepository = tagRepository;
+    	this.mediaRepository = mediaRepository;
     }
     
     @Transactional(readOnly = true)
@@ -58,15 +63,19 @@ public class TagService extends SearchEnabledService<Tag, TagSearchResource> {
     }
 
     @Transactional(readOnly = true)
-    public Tag getTag(Long tagId) {
+    public Tag getTag(Long tagId) throws TagNotFoundException {
     	
     	Tag tag = tagRepository.findOne(tagId);
+    	
+    	if (tag == null) throw new TagNotFoundException(tagId);
     	
     	return tag;
     }
     
     @Transactional(readOnly = true)
-    public List<Tag> getTagsForMedia(Long mediaId) {
+    public List<Tag> getTagsForMedia(Long mediaId) throws MediaNotFoundException {
+    	
+    	if (!mediaRepository.exists(mediaId)) throw new MediaNotFoundException(mediaId);
     	
     	List<Tag> tags = tagRepository.findByMediaIds(Arrays.asList(mediaId));
     	
@@ -74,14 +83,16 @@ public class TagService extends SearchEnabledService<Tag, TagSearchResource> {
     }
     
     @Transactional(readOnly = true)
-    public Page<Tag> getTagsForMedia(Long mediaId, Pageable pageable) {
+    public Page<Tag> getTagsForMedia(Long mediaId, Pageable pageable) throws MediaNotFoundException {
+    	
+    	if (!mediaRepository.exists(mediaId)) throw new MediaNotFoundException(mediaId);    	
     	
     	Page<Tag> page = tagRepository.findByMediaIds(Arrays.asList(mediaId), pageable);
     	
     	return page;
     }
     
-    public Tag updateTag(Long tagId, TagResource tagResource) {
+    public Tag updateTag(Long tagId, TagResource tagResource) throws TagNotFoundException {
     	
     	Tag tag = getTag(tagId);
     	

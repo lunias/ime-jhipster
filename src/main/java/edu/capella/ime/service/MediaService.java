@@ -16,7 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.domain.Tag;
+import edu.capella.ime.repository.ApplicationRepository;
 import edu.capella.ime.repository.MediaRepository;
+import edu.capella.ime.service.exception.ApplicationNotFoundException;
+import edu.capella.ime.service.exception.MediaNotFoundException;
+import edu.capella.ime.service.exception.TagNotFoundException;
 import edu.capella.ime.service.search.SearchEnabledService;
 import edu.capella.ime.web.rest.resource.MediaResource;
 import edu.capella.ime.web.rest.resource.search.MediaSearchResource;
@@ -28,12 +32,14 @@ public class MediaService extends SearchEnabledService<Media, MediaSearchResourc
     private final Logger log = LoggerFactory.getLogger(MediaService.class);
 	
     private MediaRepository mediaRepository;
-    private TagService tagService;
+    private ApplicationRepository applicationRepository;
+    private TagService tagService;    
     
     @Autowired
-    public MediaService(MediaRepository mediaRepository, TagService tagService) {
+    public MediaService(MediaRepository mediaRepository, ApplicationRepository applicationRepository, TagService tagService) {
     	
     	this.mediaRepository = mediaRepository;
+    	this.applicationRepository = applicationRepository;
     	this.tagService = tagService;
     }
     
@@ -62,15 +68,17 @@ public class MediaService extends SearchEnabledService<Media, MediaSearchResourc
     }
     
     @Transactional(readOnly = true)
-    public Media getMedia(Long mediaId) {
+    public Media getMedia(Long mediaId) throws MediaNotFoundException {
     	
     	Media media = mediaRepository.findOne(mediaId);
+    	
+    	if (media == null) throw new MediaNotFoundException(mediaId);    	
     	
     	return media;
     }
     
     @Transactional(readOnly = true)
-    public List<Tag> getMediaTags(Long mediaId) {
+    public List<Tag> getMediaTags(Long mediaId) throws MediaNotFoundException {
     	
     	Media media = getMedia(mediaId);
     	media.getTags().size();
@@ -81,28 +89,32 @@ public class MediaService extends SearchEnabledService<Media, MediaSearchResourc
     }
     
     @Transactional(readOnly = true)
-    public Page<Tag> getMediaTags(Long mediaId, Pageable pageable) {
+    public Page<Tag> getMediaTags(Long mediaId, Pageable pageable) throws MediaNotFoundException {
     	
     	return tagService.getTagsForMedia(mediaId, pageable);
     }
     
     @Transactional(readOnly = true)
-    public List<Media> getMediaForApplication(Long applicationId) {
+    public List<Media> getMediaForApplication(Long applicationId) throws ApplicationNotFoundException {
+    	
+    	if (!applicationRepository.exists(applicationId)) throw new ApplicationNotFoundException(applicationId);
     	
     	List<Media> media = mediaRepository.findByApplicationIds(Arrays.asList(applicationId));
     	
     	return media;
     }
     
-    @Transactional(readOnly = true)
-    public Page<Media> getMediaForApplication(Long applicationId, Pageable pageable) {    	
+    @Transactional(readOnly = true)    
+    public Page<Media> getMediaForApplication(Long applicationId, Pageable pageable) throws ApplicationNotFoundException {    	
+    	
+    	if (!applicationRepository.exists(applicationId)) throw new ApplicationNotFoundException(applicationId);
     	
     	Page<Media> page = mediaRepository.findByApplicationIds(Arrays.asList(applicationId), pageable);
     	
     	return page;
     }
     
-    public Media updateMedia(Long mediaId, MediaResource mediaResource) {
+    public Media updateMedia(Long mediaId, MediaResource mediaResource) throws MediaNotFoundException {
     	
     	Media media = getMedia(mediaId);
     	
@@ -127,7 +139,7 @@ public class MediaService extends SearchEnabledService<Media, MediaSearchResourc
     	mediaRepository.delete(mediaId);
     } 
     
-    public void addTagsToMedia(Long mediaId, List<Long> tagIds) {
+    public void addTagsToMedia(Long mediaId, List<Long> tagIds) throws MediaNotFoundException {
     	
     	Media media = getMedia(mediaId);
     	
@@ -136,7 +148,7 @@ public class MediaService extends SearchEnabledService<Media, MediaSearchResourc
     	media.getTags().addAll(tags);
     }
     
-    public void removeTagsFromMedia(Long mediaId, List<Long> tagIds) {
+    public void removeTagsFromMedia(Long mediaId, List<Long> tagIds) throws MediaNotFoundException {
     	
     	Media media = getMedia(mediaId);
     	

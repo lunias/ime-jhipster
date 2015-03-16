@@ -35,9 +35,5 @@ authentication:
         tokenValidityInSeconds: 1800
 
 swagger:
-    title: ime API
-    description: ime applications and beyond!
-    termsOfServiceUrl: http://jhipster.github.io/
-    contact:
-    license: Apache 2.0
-    licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.html
+    title: Capella IME API
+

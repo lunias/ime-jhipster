@@ -5,6 +5,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,7 @@ import edu.capella.ime.domain.Application;
 import edu.capella.ime.domain.Media;
 import edu.capella.ime.service.ApplicationService;
 import edu.capella.ime.service.MediaService;
+import edu.capella.ime.service.exception.InvalidResourceException;
 import edu.capella.ime.web.rest.resource.ApplicationResource;
 import edu.capella.ime.web.rest.resource.MediaResource;
 import edu.capella.ime.web.rest.resource.search.ApplicationSearchResource;
@@ -46,6 +50,9 @@ public class ApplicationEndpoint {
 	
 	private MediaService mediaService;
 	private MediaAssembler mediaAssembler;
+	
+	private static final String INVALID_APPLICATION = "Invalid application resource";
+	private static final String INVALID_APPLICATION_SEARCH = "Invalid application search resource";
 
 	@Autowired
 	public ApplicationEndpoint(ApplicationService applicationService, ApplicationAssembler applicationAssembler,
@@ -56,7 +63,7 @@ public class ApplicationEndpoint {
 		
 		this.mediaService = mediaService;
 		this.mediaAssembler = mediaAssembler;
-	}
+	}	
 	
 	@Timed
     @RequestMapping(method = RequestMethod.GET, value = "", produces = MediaType.APPLICATION_JSON_VALUE)	
@@ -130,7 +137,11 @@ public class ApplicationEndpoint {
 	
 	@Timed
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApplicationResource> updateApplication(@PathVariable Long id, @RequestBody ApplicationResource request) {
+	public ResponseEntity<ApplicationResource> updateApplication(@PathVariable Long id, @Valid @RequestBody ApplicationResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_APPLICATION, br);
+		}
 		
 		Application application = applicationService.updateApplication(id, request);
 		
@@ -148,7 +159,11 @@ public class ApplicationEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ApplicationResource> createApplication(@RequestBody ApplicationResource request) {
+	public ResponseEntity<ApplicationResource> createApplication(@Valid @RequestBody ApplicationResource request, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_APPLICATION, br);
+		}
 		
 		Application application = applicationService.createApplication(request);
 		
@@ -157,7 +172,12 @@ public class ApplicationEndpoint {
 	
 	@Timed
 	@RequestMapping(method = RequestMethod.POST, value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)	
-	public ResponseEntity<PagedResources<ApplicationResource>> search(@RequestBody List<ApplicationSearchResource> request, Pageable pageable, PagedResourcesAssembler<Application> pagedAssembler) {
+	public ResponseEntity<PagedResources<ApplicationResource>> search(@Valid @RequestBody List<ApplicationSearchResource> request, Pageable pageable, 
+			PagedResourcesAssembler<Application> pagedAssembler, BindingResult br) {
+		
+		if (br.hasErrors()) {
+			throw new InvalidResourceException(INVALID_APPLICATION_SEARCH, br);
+		}
 		
 		Page<Application> page = applicationService.searchApplications(request, pageable);
 		
