@@ -6,12 +6,18 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>ime</title>
+        <title>Capella IME</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
         <!-- build:css assets/styles/main.css -->
         <link rel="stylesheet" href="assets/styles/main.css">
+        
+        <link rel="stylesheet" href="bower_components/uigrid/ui-grid.css">
+		<link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css">
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
+	    <link rel="stylesheet" href="bower_components/bootstrap-duallistbox/dist/bootstrap-duallistbox.css">        
+        
         <!-- endbuild -->
     </head>
     <body ng-app="imeApp">
@@ -52,6 +58,14 @@
         <script src="bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js"></script>
         <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
         <script src="bower_components/angular-cache-buster/angular-cache-buster.js"></script>
+        
+        <!-- Added bower dependencies -->
+        <script src="bower_components/uigrid/ui-grid.js"></script>
+		<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<script src="bower_components/angular-ui-select/dist/select.js"></script>
+		<script src="bower_components/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.js"></script>
+		<script src="bower_components/angular-bootstrap-duallistbox/dist/angular-bootstrap-duallistbox.js"></script>        
+        
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/affix.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/alert.js"></script>
         <script src="bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/dropdown.js"></script>
@@ -85,6 +99,10 @@
         <script src="scripts/components/navbar/navbar.controller.js"></script>
         <script src="scripts/components/util/truncate.filter.js"></script>
         <script src="scripts/components/util/base64.service.js"></script>
+        
+        <!-- ime component scripts -->
+        <script src="scripts/components/ime/application.service.js"></script>
+        
         <script src="scripts/app/account/account.js"></script>
         <script src="scripts/app/account/activate/activate.js"></script>
         <script src="scripts/app/account/activate/activate.controller.js"></script>
@@ -116,6 +134,11 @@
         <script src="scripts/app/main/main.js"></script>
         <script src="scripts/app/main/main.controller.js"></script>
         <script src="scripts/components/auth/provider/auth.oauth2.service.js"></script>
+        
+        <!-- ime app scripts -->
+        <script src="scripts/app/application/editApplicationModal.controller.js"></script>
+        <script src="scripts/app/application/deleteApplicationModal.controller.js"></script>        
+        
         <!-- endbuild -->
 </body>
 </html>

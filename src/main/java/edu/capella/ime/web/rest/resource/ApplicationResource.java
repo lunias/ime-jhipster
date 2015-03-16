@@ -6,8 +6,11 @@ import javax.validation.constraints.Size;
 
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import edu.capella.ime.domain.ApplicationStatus;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApplicationResource extends ResourceSupport {
 
     @NotNull

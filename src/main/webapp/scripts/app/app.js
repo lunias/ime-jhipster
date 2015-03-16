@@ -1,7 +1,19 @@
 'use strict';
 
-angular.module('imeApp', ['LocalStorageModule', 'tmh.dynamicLocale',
-    'ngResource', 'ui.router', 'ngCookies', 'pascalprecht.translate', 'ngCacheBuster'])
+angular.module('imeApp', ['LocalStorageModule', 
+                          'tmh.dynamicLocale',
+                          'ngResource', 
+                          'ui.router', 
+                          'ngCookies', 
+                          'pascalprecht.translate', 
+                          'ngCacheBuster',
+                          'ui.grid', 
+                          'ui.grid.autoResize', 
+                          'ui.grid.infiniteScroll', 
+                          'ui.grid.cellNav', 
+                          'ui.bootstrap.modal', 
+                          'ui.bootstrap.tpls', 
+                          'ui.select'])
 
     .run(function ($rootScope, $location, $http, $state, $translate, Auth, Principal, Language) {
         $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {

@@ -7,7 +7,7 @@
                 <div class="alert alert-success" ng-switch-when="true"
                      translate="main.logged.message" translate-values="{username: '{{account.login}}'}">
                     You are logged in as user "Admin".
-                </div>
+                </div>                
                 
                 <p class="lead" ng-switch-when="false">IME requires authentication</p>                
 
@@ -20,6 +20,9 @@
                     Don't have an account? <a href=\"#/register\">Register</a>
                 </div>
             </div>
+
+			<div id="application-grid" ng-show="isInRole('ROLE_ADMIN')" external-scopes="gridScope" ui-grid="applicationGridOptions" ui-grid-infinite-scroll ui-grid-cellNav ui-grid-auto-resize>
+			</div>            
 
         </div>
     </div>
