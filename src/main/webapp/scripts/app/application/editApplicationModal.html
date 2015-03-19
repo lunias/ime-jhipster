@@ -14,8 +14,7 @@
 
 			<label>Name</label> <input type="text" class="form-control"
 				name="name" placeholder="name"
-				focus-me="{{ field === 'name' }}" ng-model="application.name"
-				ng-disabled=true>
+				focus-me="{{ field === 'name' }}" ng-model="application.name">
 		</div>
 
 		<div class="form-group">
@@ -30,8 +29,14 @@
 					first name is required to be at least 1 character</p>
 				<p class="help-block" ng-show="form.firstName.$error.maxlength">
 					first name cannot be longer than 50 characters</p>
-			</div>
+			</div>			
 		</div>
+
+		<div id="media-grid" external-scopes="gridScope" ui-grid="mediaGridOptions"
+			ui-grid-infinite-scroll ui-grid-cellNav ui-grid-auto-resize ui-grid-selection></div>
+
+		<button class="btn btn-primary" ng-click="addMedia()">Add Media</button>
+		<button class="btn btn-danger" ng-click="removeMedia()">Remove Selected</button>
 
 	</form>
 

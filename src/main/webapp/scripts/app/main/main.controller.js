@@ -23,7 +23,7 @@ angular.module('imeApp')
 			showFooter : true,
 			enableFiltering : true,
 			useExternalSorting: true,
-			enableRowSelection: true,
+			enableRowSelection: false,
 			columnDefs : [ {
 				field : 'name',
 				allowCellFocus: false

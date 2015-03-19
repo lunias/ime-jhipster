@@ -7997,12 +7997,17 @@ ul#strength {
 }
 
 @media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003110}}
+#media-grid {
+  height: 250px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003114}}
 .hover-grid-cell:hover {
   background-color: #DFF0D8 !important;
   cursor: pointer;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003117}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003121}}
 .modal.center .modal-dialog {
   position: fixed;
   top: 40%;
@@ -8012,12 +8017,12 @@ ul#strength {
   width: 80%;
   transform: translateX(-50%) translateY(-50%);
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003128}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003132}}
 .modal .modal-header {
   background-color: #428bca;
   color: #ffffff;
 }
-@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003133}}
+@media -sass-debug-info{filename{font-family:file\:\/\/C\:\/cygwin64\/home\/EAnderson56\/git-clones\/ime-jhipster\/src\/main\/scss\/main\.scss}line{font-family:\00003137}}
 .modal .modal-body {
   max-height: 600px;
   overflow-y: auto;
